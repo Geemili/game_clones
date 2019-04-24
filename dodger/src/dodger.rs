@@ -19,6 +19,12 @@ pub const PLAYER_HEIGHT: f32 = 16.0;
 
 pub struct Dodger;
 
+impl Dodger {
+    pub fn new() -> Self {
+        Self
+    }
+}
+
 impl SimpleState for Dodger {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
@@ -89,7 +95,7 @@ fn initialize_player(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     transform.set_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.3, 0.0);
 
     let sprite_render = SpriteRender {
-        sprite_sheet,
+        sprite_sheet: sprite_sheet,
         sprite_number: 0,
     };
 
