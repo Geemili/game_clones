@@ -31,8 +31,6 @@ impl SimpleState for Dodger {
 
         let sprite_sheet_handle = load_sprite_sheet(world);
 
-        world.register::<Player>();
-
         initialize_player(world, sprite_sheet_handle);
         initialize_camera(world);
     }

@@ -1,11 +1,13 @@
 extern crate amethyst;
 
 mod dodger;
+mod systems;
 
 use amethyst::{
     core::transform::TransformBundle,
+    input::InputBundle,
     prelude::*,
-    renderer::{DisplayConfig, DrawFlat2D, Pipeline, RenderBundle, Stage, ColorMask, ALPHA},
+    renderer::{ColorMask, DisplayConfig, DrawFlat2D, Pipeline, RenderBundle, Stage, ALPHA},
     utils::application_root_dir,
 };
 use dodger::Dodger;
@@ -22,9 +24,15 @@ fn main() -> amethyst::Result<()> {
             .with_pass(DrawFlat2D::new().with_transparency(ColorMask::all(), ALPHA, None)),
     );
 
+    let binding_path = format!("{}/resources/bindings_config.ron", application_root_dir());
+    let input_bundle =
+        InputBundle::<String, String>::new().with_bindings_from_file(binding_path)?;
+
     let game_data = GameDataBuilder::default()
         .with_bundle(RenderBundle::new(pipe, Some(config)).with_sprite_sheet_processor())?
-        .with_bundle(TransformBundle::new())?;
+        .with_bundle(TransformBundle::new())?
+        .with_bundle(input_bundle)?
+        .with(systems::PlayerSystem, "player_system", &["input_system"]);
     let mut game = Application::new("./resources/", Dodger::new(), game_data)?;
 
     game.run();
