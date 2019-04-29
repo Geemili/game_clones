@@ -6,16 +6,16 @@ use amethyst::renderer::{
     Camera, PngFormat, Projection, SpriteRender, SpriteSheet, SpriteSheetFormat, SpriteSheetHandle,
     Texture, TextureMetadata,
 };
+use crate::config::ArenaConfig;
 
 pub struct Player {
     pub width: f32,
     pub height: f32,
 }
 
-pub const ARENA_HEIGHT: f32 = 100.0;
-pub const ARENA_WIDTH: f32 = 100.0;
-pub const PLAYER_WIDTH: f32 = 16.0;
-pub const PLAYER_HEIGHT: f32 = 16.0;
+pub const PLAYER_WIDTH: f32 = 22.0;
+pub const PLAYER_HEIGHT: f32 = 32.0;
+pub const PLAYER_SPEED: f32 = 3.0;
 
 pub struct Dodger;
 
@@ -37,15 +37,20 @@ impl SimpleState for Dodger {
 }
 
 fn initialize_camera(world: &mut World) {
+    let (arena_height, arena_width) = {
+        let config = &world.read_resource::<ArenaConfig>();
+        (config.height, config.width)
+    };
+
     let mut transform = Transform::default();
     transform.set_z(1.0);
     world
         .create_entity()
         .with(Camera::from(Projection::orthographic(
             0.0,
-            ARENA_WIDTH,
+            arena_width,
             0.0,
-            ARENA_HEIGHT,
+            arena_height,
         )))
         .with(transform)
         .build();
@@ -89,8 +94,13 @@ fn load_sprite_sheet(world: &mut World) -> SpriteSheetHandle {
 }
 
 fn initialize_player(world: &mut World, sprite_sheet: SpriteSheetHandle) {
+    let (arena_height, arena_width) = {
+        let config = &world.read_resource::<ArenaConfig>();
+        (config.height, config.width)
+    };
+
     let mut transform = Transform::default();
-    transform.set_xyz(ARENA_WIDTH * 0.5, ARENA_HEIGHT * 0.3, 0.0);
+    transform.set_xyz(arena_width * 0.5, arena_height * 0.3, 0.0);
 
     let sprite_render = SpriteRender {
         sprite_sheet: sprite_sheet,
